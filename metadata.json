@@ -1,0 +1,5 @@
+{
+  "name": "Enterprise Private OCR Platform",
+  "description": "A high-performance, private OCR compute platform dashboard and workbench simulating GPU-accelerated text recognition.",
+  "requestFramePermissions": []
+}
