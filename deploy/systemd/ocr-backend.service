@@ -1,0 +1,35 @@
+[Unit]
+Description=Enterprise Private OCR Proxy Server
+Documentation=https://github.com/your-org/enterprise-private-ocr-platform
+After=network.target
+
+[Service]
+Type=simple
+User=zhengxueen
+Group=zhengxueen
+WorkingDirectory=/home/zhengxueen/workspace/enterprise-private-ocr-platform
+ExecStart=/home/zhengxueen/.nvm/versions/node/v24.11.1/bin/node server/index.mjs
+Restart=always
+RestartSec=10
+
+# 环境变量
+Environment=NODE_ENV=production
+Environment=PORT=8012
+Environment=HOST=127.0.0.1
+
+# 从 .env.local 加载环境变量
+EnvironmentFile=/home/zhengxueen/workspace/enterprise-private-ocr-platform/.env.local
+
+# 安全限制
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/zhengxueen/workspace/enterprise-private-ocr-platform
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ocr-backend
+
+[Install]
+WantedBy=multi-user.target

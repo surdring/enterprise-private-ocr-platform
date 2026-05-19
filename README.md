@@ -1,6 +1,3 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
 # Enterprise Private OCR Platform
 
@@ -18,9 +15,6 @@
 - 识别结果展示（表格内容会尽量转为可读形式）
 - 多格式导出（CSV / Table CSV / Markdown / HTML / JSON）
 
-View your app in AI Studio:
-
-- https://ai.studio/apps/drive/1zowKsG5Fe5hw6Z8dguMeCcULmYtR7e1n
 
 ## 本地运行（开发模式）
 
@@ -42,9 +36,15 @@ npm install
 
 - `OCR_API_URL`：外部 OCR API 地址
 - `OCR_HTTP_TIMEOUT_MS`：上游请求超时（毫秒）
-- `OCR_MAX_FILE_SIZE_BYTES`：上传文件大小限制
+- `OCR_MAX_FILE_SIZE_BYTES`：上传文件大小限制（bytes）。如果你在控制台看到 `413 (Payload Too Large)` / `FILE_TOO_LARGE`，通常是这里的限制太小。
 - `OCR_UPSTREAM_MAX_ATTEMPTS`：上游 5xx/429 最大尝试次数
 - `OCR_UPSTREAM_RETRY_BACKOFF_MS`：上游重试退避时间（毫秒）
+
+示例（将上传限制调到 50MB，修改后需重启后端生效）：
+
+```dotenv
+OCR_MAX_FILE_SIZE_BYTES=52428800
+```
 
 ### 3) 启动后端（OCR 代理）
 
@@ -146,7 +146,8 @@ server {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
-    client_max_body_size 25m;
+    # 需要同时大于等于后端 OCR_MAX_FILE_SIZE_BYTES，否则 Nginx 也会直接返回 413
+    client_max_body_size 50m;
   }
 }
 ```

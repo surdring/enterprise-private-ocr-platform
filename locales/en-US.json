@@ -1,0 +1,99 @@
+{
+  "app": {
+    "title": "Enterprise OCR Platform",
+    "subtitle": "GPU Accelerated • Private Cloud",
+    "systemOnline": "System Online"
+  },
+  "sidebar": {
+    "mainMenu": "Main Menu",
+    "dashboard": "Dashboard",
+    "workbench": "Workbench",
+    "system": "System",
+    "modelRegistry": "Model Registry",
+    "logsAndAudit": "Logs & Audit",
+    "settings": "Settings",
+    "serverStatus": "PaddleOCR Server",
+    "version": "v2.6.0 (GPU)"
+  },
+  "dashboard": {
+    "todayProcessed": "Today's Processed",
+    "docs": "docs",
+    "timeSaved": "Time Saved",
+    "hours": "hours",
+    "vsManual": "vs manual",
+    "gpuMemory": "GPU Memory",
+    "gb": "GB",
+    "used": "used",
+    "computeLoad": "Compute Load",
+    "throughput": "Throughput (Docs/Hour)",
+    "computeNodeStatus": "Compute Node Status",
+    "internalNetwork": "Internal Network",
+    "active": "Active",
+    "vramUsage": "VRAM Usage",
+    "gpuUtilization": "GPU Utilization",
+    "paddleOcrModel": "PaddleOCR Model",
+    "loaded": "Loaded (GPU)",
+    "trend": {
+      "increase": "+{{value}}%",
+      "decrease": "-{{value}}%"
+    }
+  },
+  "workbench": {
+    "uploadDocument": "Upload Document",
+    "startRecognition": "Start API Recognition",
+    "processing": "Processing via API...",
+    "export": "Export",
+    "exportFormat": {
+      "auto": "Auto",
+      "csv": "CSV",
+      "tableCsv": "Table CSV",
+      "markdown": "Markdown",
+      "html": "HTML",
+      "json": "JSON"
+    },
+    "options": {
+      "orientation": "Orientation",
+      "dewarping": "Dewarping",
+      "chart": "Chart/Table"
+    },
+    "preview": {
+      "title": "Preview",
+      "uploadToBegin": "Upload a file to begin preview",
+      "zoom": "Zoom"
+    },
+    "results": {
+      "title": "Recognition Results",
+      "items": "{{count}} items",
+      "noData": "No data yet",
+      "uploadAndProcess": "Upload and process a document to see structured results",
+      "content": "Content",
+      "confidence": "Conf.",
+      "fullText": "Full Text",
+      "raw": "Raw",
+      "close": "Close",
+      "empty": "[empty]"
+    },
+    "model": "Model",
+    "latency": "Latency",
+    "errors": {
+      "fileTooLarge": "File too large: current backend limit is {{limit}} MB. Please compress/crop the file, or increase OCR_MAX_FILE_SIZE_BYTES and restart the backend.",
+      "requestFailed": "Request failed",
+      "invalidResponse": "Invalid response: missing layoutParsingResults"
+    }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  }
+}

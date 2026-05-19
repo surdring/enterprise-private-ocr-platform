@@ -3,13 +3,16 @@ import dotenv from 'dotenv';
 import express from 'express';
 import multer from 'multer';
 
-dotenv.config({ path: '.env.local' });
 dotenv.config();
+dotenv.config({ path: '.env.local', override: true });
 
 const DEFAULT_OCR_API_URL = 'https://qddeq5jcbdo0acd6.aistudio-app.com/layout-parsing';
 
 const app = express();
 app.use(cors());
+
+console.log('[ocr-proxy] OCR_API_URL =', process.env.OCR_API_URL ?? DEFAULT_OCR_API_URL);
+console.log('[ocr-proxy] OCR_HTTP_TIMEOUT_MS =', process.env.OCR_HTTP_TIMEOUT_MS ?? '(default)');
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -231,6 +234,28 @@ app.post('/api/ocr/layout-parsing', upload.single('file'), async (req, res) => {
       message: e?.message ?? String(e),
     }));
   }
+});
+
+app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
+
+  const isMulter = err?.name === 'MulterError';
+  if (isMulter) {
+    const code = err?.code;
+    if (code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json(buildError('FILE_TOO_LARGE', 'Uploaded file exceeds size limit', {
+        limitBytes: Number(process.env.OCR_MAX_FILE_SIZE_BYTES ?? 20 * 1024 * 1024),
+      }));
+    }
+    return res.status(400).json(buildError('UPLOAD_ERROR', 'File upload failed', {
+      code,
+      message: err?.message,
+    }));
+  }
+
+  return res.status(500).json(buildError('INTERNAL_SERVER_ERROR', 'Unexpected server error', {
+    message: err?.message ?? String(err),
+  }));
 });
 
 const port = Number(process.env.PORT ?? 8012);

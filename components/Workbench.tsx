@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload, File as FileIcon, Loader2, Download, AlertTriangle, CheckCircle, ZoomIn, ZoomOut, FileText } from 'lucide-react';
 import { OCRResult } from '../types';
 import clsx from 'clsx';
@@ -396,6 +397,7 @@ function buildPdfPageIndex(totalPages: number, step = 10) {
 }
 
 export const Workbench: React.FC = () => {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'processing' | 'done'>('idle');
@@ -477,6 +479,21 @@ export const Workbench: React.FC = () => {
       });
 
       if (!response.ok) {
+        const contentType = response.headers.get('content-type') ?? '';
+        if (contentType.includes('application/json')) {
+          const body = await response.json().catch(() => null);
+          const code = body?.error?.code;
+          const message = body?.error?.message;
+          const limitBytes = body?.error?.details?.limitBytes;
+          if (code === 'FILE_TOO_LARGE' && Number.isFinite(limitBytes)) {
+            const limitMb = (Number(limitBytes) / 1024 / 1024).toFixed(1);
+            throw new Error(t('workbench.errors.fileTooLarge', { limit: limitMb }));
+          }
+          if (code || message) {
+            throw new Error(`${response.status}: ${code ?? 'ERROR'}${message ? ` - ${message}` : ''}`);
+          }
+        }
+
         const text = await response.text().catch(() => '');
         const msg = text ? `${response.status}: ${text}` : `${response.status}: Request failed`;
         throw new Error(msg);
@@ -486,13 +503,13 @@ export const Workbench: React.FC = () => {
       const layoutResults = json?.result?.layoutParsingResults;
 
       if (!Array.isArray(layoutResults)) {
-        throw new Error('Invalid response: missing layoutParsingResults');
+        throw new Error(t('workbench.errors.invalidResponse'));
       }
 
       const nextResults: Array<OCRResult & { rawText: string; fullText: string }> = layoutResults.map((res: any, index: number) => {
         const rawText: string = res?.markdown?.text ?? '';
         const fullText = extractReadableText(rawText);
-        const preview = fullText.length > 600 ? `${fullText.slice(0, 600)}...` : (fullText || '[empty]');
+        const preview = fullText.length > 600 ? `${fullText.slice(0, 600)}...` : (fullText || t('workbench.results.empty'));
         return {
           id: index + 1,
           text: preview,
@@ -805,7 +822,7 @@ export const Workbench: React.FC = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors border border-slate-200"
             >
                 <Upload size={18} />
-                Upload Document
+                {t('workbench.uploadDocument')}
             </button>
             
             {file && (
@@ -825,7 +842,7 @@ export const Workbench: React.FC = () => {
                             checked={useDocOrientationClassify}
                             onChange={(e) => setUseDocOrientationClassify(e.target.checked)}
                         />
-                        <span>方向</span>
+                        <span>{t('workbench.options.orientation')}</span>
                     </label>
                     <label className="flex items-center gap-1.5 select-none">
                         <input
@@ -833,7 +850,7 @@ export const Workbench: React.FC = () => {
                             checked={useDocUnwarping}
                             onChange={(e) => setUseDocUnwarping(e.target.checked)}
                         />
-                        <span>矫正</span>
+                        <span>{t('workbench.options.dewarping')}</span>
                     </label>
                     <label className="flex items-center gap-1.5 select-none">
                         <input
@@ -841,7 +858,7 @@ export const Workbench: React.FC = () => {
                             checked={useChartRecognition}
                             onChange={(e) => setUseChartRecognition(e.target.checked)}
                         />
-                        <span>表格/图表</span>
+                        <span>{t('workbench.options.chart')}</span>
                     </label>
                 </div>
              )}
@@ -851,14 +868,14 @@ export const Workbench: React.FC = () => {
                     className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-md shadow-blue-500/20 transition-all"
                 >
                     <CheckCircle size={18} />
-                    Start API Recognition
+                    {t('workbench.startRecognition')}
                 </button>
              )}
              
              {status === 'processing' && (
                  <div className="flex items-center gap-3 px-6 py-2 bg-blue-50 text-blue-700 rounded-lg font-medium border border-blue-100">
                     <Loader2 size={18} className="animate-spin" />
-                    <span>Processing via API...</span>
+                    <span>{t('workbench.processing')}</span>
                 </div>
              )}
 
@@ -868,21 +885,21 @@ export const Workbench: React.FC = () => {
                         value={exportFormat}
                         onChange={(e) => setExportFormat(e.target.value as any)}
                         className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700"
-                        aria-label="Export format"
+                        aria-label={t('workbench.exportFormat.title')}
                     >
-                        <option value="auto">Auto</option>
-                        <option value="csv">CSV</option>
-                        <option value="table_csv">Table CSV</option>
-                        <option value="md">Markdown</option>
-                        <option value="html">HTML</option>
-                        <option value="json">JSON</option>
+                        <option value="auto">{t('workbench.exportFormat.auto')}</option>
+                        <option value="csv">{t('workbench.exportFormat.csv')}</option>
+                        <option value="table_csv">{t('workbench.exportFormat.tableCsv')}</option>
+                        <option value="md">{t('workbench.exportFormat.markdown')}</option>
+                        <option value="html">{t('workbench.exportFormat.html')}</option>
+                        <option value="json">{t('workbench.exportFormat.json')}</option>
                     </select>
                     <button 
                         onClick={() => handleExport()}
                         className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-md shadow-emerald-500/20 transition-all"
                     >
                         <Download size={18} />
-                        Export
+                        {t('workbench.export')}
                     </button>
                 </div>
              )}
@@ -928,7 +945,7 @@ export const Workbench: React.FC = () => {
                 ) : (
                     <div className="text-slate-500 flex flex-col items-center gap-3">
                         <Upload size={48} className="opacity-20" />
-                        <p>Upload a file to begin preview</p>
+                        <p>{t('workbench.preview.uploadToBegin')}</p>
                     </div>
                 )}
             </div>
@@ -949,9 +966,9 @@ export const Workbench: React.FC = () => {
             <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
                 <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    Recognition Results
+                    {t('workbench.results.title')}
                 </h3>
-                {results.length > 0 && <span className="text-xs font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">{results.length} items</span>}
+                {results.length > 0 && <span className="text-xs font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">{t('workbench.results.items', { count: results.length })}</span>}
             </div>
 
             {errorMessage && (
@@ -966,8 +983,8 @@ export const Workbench: React.FC = () => {
                         <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 font-semibold">
                             <tr>
                                 <th className="px-4 py-3 w-12 border-b">#</th>
-                                <th className="px-4 py-3 border-b">Content</th>
-                                <th className="px-4 py-3 text-right border-b">Conf.</th>
+                                <th className="px-4 py-3 border-b">{t('workbench.results.content')}</th>
+                                <th className="px-4 py-3 text-right border-b">{t('workbench.results.confidence')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -980,15 +997,15 @@ export const Workbench: React.FC = () => {
                                             <div className="shrink-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 bg-white hover:bg-slate-50"
-                                                    onClick={() => setActiveResult({ title: `结果 #${item.id}（全文）`, content: item.fullText || item.text })}
+                                                    onClick={() => setActiveResult({ title: `${t('workbench.results.fullText')} #${item.id}`, content: item.fullText || item.text })}
                                                 >
-                                                    全文
+                                                    {t('workbench.results.fullText')}
                                                 </button>
                                                 <button
                                                     className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 bg-white hover:bg-slate-50"
-                                                    onClick={() => setActiveResult({ title: `结果 #${item.id}（原始）`, content: item.rawText || '' })}
+                                                    onClick={() => setActiveResult({ title: `${t('workbench.results.raw')} #${item.id}`, content: item.rawText || '' })}
                                                 >
-                                                    原始
+                                                    {t('workbench.results.raw')}
                                                 </button>
                                             </div>
                                         </div>
@@ -1005,16 +1022,16 @@ export const Workbench: React.FC = () => {
                         <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                             <FileText size={24} className="text-slate-300" />
                         </div>
-                        <p className="text-sm">No data yet.</p>
-                        <p className="text-xs mt-1 text-slate-400">Upload and process a document to see structured results.</p>
+                        <p className="text-sm">{t('workbench.results.noData')}</p>
+                        <p className="text-xs mt-1 text-slate-400">{t('workbench.results.uploadAndProcess')}</p>
                     </div>
                 )}
             </div>
             
             {/* Footer Summary */}
             <div className="p-3 border-t border-slate-100 bg-slate-50 rounded-b-xl text-xs text-slate-500 flex justify-between">
-                <span>Model: external_api_layout_parsing</span>
-                <span>Latency: 284ms</span>
+                <span>{t('workbench.model')}: external_api_layout_parsing</span>
+                <span>{t('workbench.latency')}: 284ms</span>
             </div>
         </div>
       </div>
@@ -1028,11 +1045,11 @@ export const Workbench: React.FC = () => {
                         className="text-sm px-3 py-1.5 rounded border border-slate-200 text-slate-600 bg-white hover:bg-slate-50"
                         onClick={() => setActiveResult(null)}
                     >
-                        关闭
+                        {t('workbench.results.close')}
                     </button>
                 </div>
                 <div className="p-4 max-h-[70vh] overflow-auto">
-                    <pre className="whitespace-pre-wrap break-words text-sm text-slate-800">{activeResult.content || '[empty]'}</pre>
+                    <pre className="whitespace-pre-wrap break-words text-sm text-slate-800">{activeResult.content || t('workbench.results.empty')}</pre>
                 </div>
             </div>
         </div>

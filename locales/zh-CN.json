@@ -1,0 +1,121 @@
+{
+  "app": {
+    "title": "企业 OCR 平台",
+    "subtitle": "GPU 加速 • 私有云",
+    "systemOnline": "系统在线",
+    "admin": "管理员",
+    "user": "普通用户",
+    "logout": "退出登录",
+    "accessDenied": "访问受限",
+    "adminOnly": "只有管理员可以访问此功能"
+  },
+  "login": {
+    "title": "登录",
+    "subtitle": "企业私有 OCR 平台",
+    "username": "用户名",
+    "password": "密码",
+    "usernamePlaceholder": "请输入用户名",
+    "passwordPlaceholder": "请输入密码",
+    "loginButton": "登录",
+    "loggingIn": "登录中...",
+    "errorInvalidCredentials": "用户名或密码错误",
+    "quickLogin": "一键体验（普通用户）",
+    "orUseCredentials": "或使用账号密码",
+    "rememberMe": "记住我",
+    "forgotPassword": "忘记密码？"
+  },
+  "sidebar": {
+    "mainMenu": "主菜单",
+    "dashboard": "仪表盘",
+    "workbench": "工作台",
+    "admin": "管理员",
+    "adminLogin": "管理员登录",
+    "system": "系统",
+    "modelRegistry": "模型仓库",
+    "logsAndAudit": "日志与审计",
+    "settings": "设置",
+    "serverStatus": "PaddleOCR 服务器",
+    "version": "v2.6.0 (GPU)"
+  },
+  "dashboard": {
+    "todayProcessed": "今日处理",
+    "docs": "文档",
+    "timeSaved": "节省时间",
+    "hours": "小时",
+    "vsManual": "对比人工",
+    "gpuMemory": "GPU 显存",
+    "gb": "GB",
+    "used": "已使用",
+    "computeLoad": "计算负载",
+    "throughput": "吞吐量 (文档/小时)",
+    "computeNodeStatus": "计算节点状态",
+    "internalNetwork": "内部网络",
+    "active": "运行中",
+    "vramUsage": "显存使用",
+    "gpuUtilization": "GPU 利用率",
+    "paddleOcrModel": "PaddleOCR 模型",
+    "loaded": "已加载 (GPU)",
+    "trend": {
+      "increase": "+{{value}}%",
+      "decrease": "-{{value}}%"
+    }
+  },
+  "workbench": {
+    "uploadDocument": "上传文档",
+    "startRecognition": "开始 API 识别",
+    "processing": "通过 API 处理中...",
+    "export": "导出",
+    "exportFormat": {
+      "auto": "自动",
+      "csv": "CSV",
+      "tableCsv": "表格 CSV",
+      "markdown": "Markdown",
+      "html": "HTML",
+      "json": "JSON"
+    },
+    "options": {
+      "orientation": "方向",
+      "dewarping": "矫正",
+      "chart": "表格/图表"
+    },
+    "preview": {
+      "title": "预览",
+      "uploadToBegin": "上传文件开始预览",
+      "zoom": "缩放"
+    },
+    "results": {
+      "title": "识别结果",
+      "items": "{{count}} 个项目",
+      "noData": "暂无数据",
+      "uploadAndProcess": "上传并处理文档以查看结构化结果",
+      "content": "内容",
+      "confidence": "置信度",
+      "fullText": "全文",
+      "raw": "原始",
+      "close": "关闭",
+      "empty": "[空]"
+    },
+    "model": "模型",
+    "latency": "延迟",
+    "errors": {
+      "fileTooLarge": "文件过大：当前后端限制 {{limit}} MB。请压缩/裁剪文件，或提高 OCR_MAX_FILE_SIZE_BYTES 后重启后端。",
+      "requestFailed": "请求失败",
+      "invalidResponse": "响应无效：缺少 layoutParsingResults"
+    }
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "filter": "筛选",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "warning": "警告",
+    "info": "信息"
+  }
+}
